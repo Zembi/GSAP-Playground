@@ -12,18 +12,36 @@ window.addEventListener("load", (event) => {
     const gsapCursor = new ActivateGSAPCursor('.follow_circle', ['combine1', 'combine2']);
     gsapCursor.start();
 
-    const el7 = new SplitText('.sect7 .p', [ 'char', 'word'], [ 'char', 'word']);
-    const el8 = new SplitText('.sect8 .p', [ 'char', 'word'], [ 'char', 'word']);
+    const el7 = new SplitType('.sect7 .p', { types: 'chars, words' });
+    const el8 = new SplitType('.sect8 .p', { types: 'chars, words' });
+    // const el8 = new SplitText('.sect8 .p', [ 'char', 'word'], [ 'char', 'word']);
 
-    const tl = gsap.timeline({paused: true});
+    // const tl = gsap.timeline({paused: false});
 
-    tl.from($('.sect7 .word'), {opacity: 0, y: 100, duration: 0.5, ease: 'back.out(2)', stagger: {amount: 2},
+    // tl.from($('.sect7 .word'), {
+    //     opacity: 0, 
+    //     y: 100, 
+    //     duration: 0.5, 
+    //     ease: 'back.out(2)', 
+    //     stagger: {amount: 2},
+    //     scrollTrigger: {
+    //         trigger: $('.sect7'),
+    //         start: "top bottom",
+    //         onEnter: () => tl.play()
+    //     }
+    // });
+
+    const tl = gsap.timeline({
         scrollTrigger: {
-            trigger: $('.sect7'),
-            start: "bottom bottom",
-            onEnter: () => tl.play()
+          trigger: ".sect7",
+          start: "center bottom",
+          end: "+=1000",
+          scrub: 1,
+          pin: true,
+          markers: true
         }
-    });
+      });
+      tl.to(".sect7 .word", {yPercent: 0 , duration: 1})
 
     const sections = gsap.utils.toArray("section");
     const lastIndex = sections.length - 1;
@@ -38,13 +56,21 @@ window.addEventListener("load", (event) => {
         // Create a standalone ST instance, and use the progress value (0 - 1) to tween the timeline's progress
         ScrollTrigger.create({ 
             trigger: section,
-            start: ()=> i==0 ? "top top" : "top bottom", // The FIRST section will use a different start value than the rest
-            end: ()=> i==lastIndex ? "top top" : "bottom top", // The LAST section will use a different start value than the rest    
+            start: ()=> i == 0 ? "top top" : "top bottom", // The FIRST section will use a different start value than the rest
+            end: ()=> i == lastIndex ? "top top" : "bottom top", // The LAST section will use a different start value than the rest    
             onRefresh: self => { // onRefresh (so it gets reset upon resize), create a timeline that moves the h1 + bg vertically      
                 section._tl = gsap.timeline({paused:true, defaults:{ease:'none', overwrite:'auto'}}) 
-                    .fromTo(section._p, {y:()=> i==0 ? 0 : (innerHeight/2)*1.5}, {y:()=> i==lastIndex ? 0 : (-innerHeight/2)*1.5}, 0)
-                    .fromTo(section._bg, {y:()=> i==0 ? -innerHeight/2 : 0}, {y:()=> i==lastIndex ? -innerHeight/2 : -innerHeight}, 0)    
-                    .progress(self.progress); //use progress to position the timeline correctly      
+                    .fromTo(section._p, {
+                        y:()=> i == 0 ? 0 : (innerHeight/2)*1.5
+                    }, {
+                        y:()=> i==lastIndex ? 0 : (-innerHeight/2)*1.5
+                    }, 0)
+                    .fromTo(section._bg, {
+                        y:()=> i==0 ? -innerHeight/2 : 0
+                    }, {
+                        y:()=> i==lastIndex ? -innerHeight/2 : -innerHeight
+                    }, 0)    
+                    //.progress(self.progress); //use progress to position the timeline correctly      
             },
             onUpdate: self => { gsap.to(section._tl, {duration:0.75, progress:self.progress}); }
         });
@@ -387,7 +413,7 @@ class SplitText {
                     let lastSpace = allChars[index + 1] === ' ' ? ' ' : '';
 
                     if(char == ' ') {
-                        console.log(1);
+                        // console.log(1);
                         result += '<span class="' + this.emptySpacesClass + '">' + char + '</span>' + lastSpace;
                     }
                     else {
@@ -418,7 +444,7 @@ class SplitText {
                 let result = '';
                 let str = elem.innerHTML;
                 const allWords = str.split('<span class="' + emptyClass + '"> </span>');
-                console.log(allWords);
+                // console.log(allWords);
                 allWords.forEach((word, index) => {
                     let lastSpace = index === (allWords.length - 1) ? '' : ' ';
                     
