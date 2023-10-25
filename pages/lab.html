@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="LaB">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -43,35 +43,36 @@
           <li class="nav-item">
             <a class="nav-link" href="../pages/playground.html">PlayGround</a>
           </li>
-          <li class="nav-item active">
-            <a class="nav-link" href="../pages/simpleStuff.html">Simple Stuff <span class="sr-only">(current)</span></a>
-          </li>
           <li class="nav-item">
-            <a class="nav-link" href="../pages/lab.html">Lab</a>
+            <a class="nav-link" href="../pages/simpleStuff.html">Simple Stuff</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="../pages/lab.html">Lab <span class="sr-only">(current)</span></a>
           </li>
         </ul>
       </div>
     </nav>
     
-    <main>
+    <div class="fake-menu">
+        <ul class="">
+            <li>
+                <a href="/home/" onclick="return getHTMLData(event)" data-target="home">Home</a>
+            </li>
+            <li>
+                <a href="/case/" onclick="return getHTMLData(event)" data-target="case">Case</a>
+            </li>
+            <li>
+                <a href="/about/" onclick="return getHTMLData(event)" data-target="about">About</a>
+            </li>
+            <li>
+                <a href="/contact/" onclick="return getHTMLData(event)" data-target="contact">Contact</a>
+            </li>
+        </ul>
+    </div>
 
-      <div class="fillers"></div>
+    <div id="Content"></div>
 
-      <section class="section1">
-        <div class="container1">
-          <h2>Title Of Project</h2>
-          <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Soluta vero ex, dolor enim dignissimos ipsa nihil tempore quo, fugiat praesentium id earum commodi facilis distinctio quia rem laboriosam dolore harum. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolore architecto iure quasi aspernatur pariatur doloremque eaque expedita recusandae ab voluptas vel libero voluptatum fuga fugit similique, voluptatibus necessitatibus rem! Necessitatibus. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolorem, placeat. Quod, obcaecati sit deserunt consectetur iure eius vero maiores nulla totam dolorem, nobis harum corporis ut placeat est repudiandae iusto?</p>
-        </div>
-        <img class="container1" src="https://images.unsplash.com/photo-1520209759809-a9bcb6cb3241?auto=format&fit=crop&q=80&w=1000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aW1nfGVufDB8fDB8fHww">
-        <img class="container1" src="https://images.unsplash.com/photo-1520209759809-a9bcb6cb3241?auto=format&fit=crop&q=80&w=1000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aW1nfGVufDB8fDB8fHww">
-        <img class="container1" src="https://images.unsplash.com/photo-1520209759809-a9bcb6cb3241?auto=format&fit=crop&q=80&w=1000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aW1nfGVufDB8fDB8fHww">
-        <img class="container1" src="https://images.unsplash.com/photo-1520209759809-a9bcb6cb3241?auto=format&fit=crop&q=80&w=1000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aW1nfGVufDB8fDB8fHww">
 
-      </section>
-
-      <div class="fillers"></div>
-
-      <script src="../scripts/scriptSimpleStuff.js"></script>
-    </main>
+    <script src="../scripts/scriptLab.js"></script>
 </body>
 </html>

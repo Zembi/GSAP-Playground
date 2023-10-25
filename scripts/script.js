@@ -41,8 +41,6 @@ window.addEventListener("load", (event) => {
         // Give the backgrounds some random images
         section._bg.style.backgroundImage = `url(https://picsum.photos/${innerWidth}/${innerHeight * 2}?random=${i})`;
 
-        // section._p.querySelectorAll('');
-
         // Create a standalone ST instance, and use the progress value (0 - 1) to tween the timeline's progress
         ScrollTrigger.create({
             trigger: section,
@@ -50,6 +48,11 @@ window.addEventListener("load", (event) => {
             end: () => i == lastIndex ? "top top" : "bottom top", // The LAST section will use a different start value than the rest    
             onRefresh: self => { // onRefresh (so it gets reset upon resize), create a timeline that moves the h1 + bg vertically
                 section._tl = gsap.timeline({ paused: true, defaults: { ease: 'none', overwrite: 'auto' } })
+                    // .fromTo(section._p, {
+                    //     y:()=> i == 0 ? 0 : (innerHeight/2)*1.5
+                    // }, {
+                    //     y:()=> i==lastIndex ? 0 : (-innerHeight/2)*1.5
+                    // }, 0)
                     .fromTo(section._bg, {
                         y: () => i == 0 ? -innerHeight / 2 : 0
                     }, {

@@ -5,10 +5,23 @@ $(document).ready(function () {
     jQuery('img').attr('data-cursor-scale', 'lg-scale');
 
     // ADD CURSOR ELEMENT TO HTML
-    jQuery('body').prepend('<div class="follow_circle"></div>');
+    jQuery('body').prepend(`
+        <div class="follow_circle">
+            <div class="cursor_media">
+                <video preload="auto" style="opacity: 0; z-index: 1;"></video>
+            </div>
+        </div>
+    `);
 });
 
 window.addEventListener("load", (event) => {
+    const cursorGSAP = new ActivateGSAPCursor('.follow_circle', 
+        {video: {
+            url: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
+        }
+    });
+    cursorGSAP.start();
+
     const elH2 = new SplitType('.section1 h2', { types: 'chars' });
     const elp = new SplitType('.section1 p', { types: 'words' });
 

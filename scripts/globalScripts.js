@@ -1,13 +1,15 @@
 
 // GSAP CUSTOM CLASS
 class ActivateGSAPCursor {
-    constructor(cursorName = null) {
+    constructor(cursorName = null, options = {}) {
         // IF TRUE, EVERY CUSTOM CONSOLE LOG MESSAGE WILL BE SHOWN. IF FALSE WE CAN DISABLE ALL MESSAGES THAT HELP WITH THE CONSTRUCTOR
         this.consoleMsgsEnabled = true;
         
         // CURSOR
         this.cursorName = cursorName;
         this.cursor = this.cursorName && document.querySelector(cursorName);
+
+        this.options = options;
 
         this.additions = null;
     }
@@ -31,7 +33,7 @@ class ActivateGSAPCursor {
     #activateCursorEvents() {
         // INITIATE CURSOR ACTION
         gsap.set(this.cursor, { 
-            xPercent: 0, yPercent: 0, opacity: 1 
+            xPercent: 5, yPercent: 5, opacity: 1 
         });
 
         
@@ -73,7 +75,7 @@ class ActivateGSAPCursor {
         });
     }
 
-    #handlePointerEnterEvent(e, item, nameOfDataAttr, effectDur = 0.3) {
+    #handlePointerEnterEvent(e, item, nameOfDataAttr, effectDur = 0.5) {
         // TYPES OF SCALES. EVERY SUB ARRAY CONTAINS THE ATTRIBUTE VALUE THAT WE ADD TO HTML AND THE SCALE VALUE 
         const typesOfScalesAttrs = [['scale', 7], ['lg-scale', 10]];
         const mapScales = new Map(typesOfScalesAttrs);
@@ -90,39 +92,54 @@ class ActivateGSAPCursor {
         gsap.to(this.cursor, effectDur, {
             opacity: 1,
             scale: scaleVal,
+            ease: "elastic.out(1,0.9)",
         });
 
-        const videoObj = {
-            videoUrl: 'https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4',
-            imgUrl: 'https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217',
+
+        if(this.options.video && item.nodeName === 'IMG') {
+            this.#activateOrDeactivateVideoOnCursor(this.options.video, true);
         }
-        // this.#addVideoToCursor(videoObj);
+
         item.classList.add('hovered');
     }
 
-    #addVideoToCursor({videoUrl, imgUrl}) {
-        this.additions = document.createElement('video');
+    #activateOrDeactivateVideoOnCursor({url = null}, active) {
+        this.additions = document.querySelector(this.cursorName + ' video');
 
-        this.additions.src = videoUrl;
-
-        this.additions.poster = imgUrl;
-
-        this.additions.autoplay = true;
-        this.additions.controls = false;
-        this.additions.muted = false;
-        this.additions.height = 100; // 👈️ in px
-        this.additions.width = 200; // 👈️ in px
-
-        this.cursor.appendChild(this.additions);
+        if(this.additions.nodeName == 'VIDEO') {
+            // START VIDEO
+            if(active) {
+                this.additions.src = url;
+                this.additions.autoplay = true;
+                this.additions.controls = false;
+                this.additions.muted = true;
+                this.additions.style.opacity = 1;
+            }
+            // END VIDEO
+            else {
+                this.additions.src = '';
+                this.additions.autoplay = false;
+                this.additions.controls = false;
+                this.additions.muted = true;
+                this.additions.style.opacity = 0;
+            }
+        }
     }
 
     #handlePointerLeaveEvent(e, item, effectDur = 0.3) {
         gsap.to(this.cursor, effectDur, {
-            opacity: 0,
+            xPercent: 5,
+            yPercent: 5, 
+            opacity: 1, 
             scale: 1,
+            ease: "back.out(1.7, 1)",
         });
 
-        this.additions && this.cursor.removeChild(this.additions);
+        if(this.options.video && item.nodeName === 'IMG') {
+            this.#activateOrDeactivateVideoOnCursor(this.options.video, false);
+        }
+
+        // this.additions && this.cursor.removeChild(this.additions);
 
         item.classList.remove('hovered');
     }
@@ -326,3 +343,6 @@ function validateHTML(htmlString) {
     const regex = RegExp.prototype.test.bind(/(<([^>]+)>)/i);
     return regex(htmlString);
 }
+
+
+// function 

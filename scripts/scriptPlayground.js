@@ -9,7 +9,7 @@ $(document).ready(function() {
 });
 
 window.addEventListener("load", (event) => {
-    const gsapCursor = new ActivateGSAPCursor('.follow_circle', ['combine1', 'combine2']);
+    const gsapCursor = new ActivateGSAPCursor('.follow_circle');
     gsapCursor.start();
 
     gsap.registerPlugin(ScrollTrigger);
