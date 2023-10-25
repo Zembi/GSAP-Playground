@@ -1,5 +1,5 @@
 
-$(document).ready(function() {
+$(document).ready(function () {
     // ELEMENTS THAT WILL INTERACT WITH GSAP CURSOR
     jQuery('p').attr('data-cursor-scale', 'scale');
     jQuery('img').attr('data-cursor-scale', 'lg-scale');
@@ -51,8 +51,8 @@ window.addEventListener("load", (event) => {
             start: "15% top",
             end: "60% 100%",
             scrub: 4,
-            onEnter: function() { gsap.to("#bird", { scaleX: 1, rotation: 0 }) },
-            onLeave: function() { gsap.to("#bird", { scaleX: -1, rotation: -15 }) },
+            onEnter: function () { gsap.to("#bird", { scaleX: 1, rotation: 0 }) },
+            onLeave: function () { gsap.to("#bird", { scaleX: -1, rotation: -15 }) },
         }
     })
 
@@ -127,13 +127,13 @@ window.addEventListener("load", (event) => {
             start: "40% top",
             end: "70% 100%",
             scrub: 3,
-            onEnter: function() {
+            onEnter: function () {
                 gsap.utils.toArray("#bats path").forEach((item, i) => {
                     gsap.to(item, { scaleX: 0.5, yoyo: true, repeat: 11, duration: 0.15, delay: 0.7 + (i / 10), transformOrigin: "50% 50%" })
                 });
                 gsap.set("#bats", { opacity: 1 })
             },
-            onLeave: function() { gsap.to("#bats", { opacity: 0, delay: 2 }) },
+            onLeave: function () { gsap.to("#bats", { opacity: 0, delay: 2 }) },
         }
     })
 
@@ -213,167 +213,31 @@ window.addEventListener("load", (event) => {
             start: "4000 top",
             end: "6000 100%",
             scrub: 5,
-            onEnter: function() { gsap.set("#fstar", { opacity: 1 }) },
-            onLeave: function() { gsap.set("#fstar", { opacity: 0 }) },
+            onEnter: function () { gsap.set("#fstar", { opacity: 1 }) },
+            onLeave: function () { gsap.set("#fstar", { opacity: 0 }) },
         }
     })
 
 
     //reset scrollbar position after refresh
-    window.onbeforeunload = function() {
+    window.onbeforeunload = function () {
         window.scrollTo(0, 0);
     }
 
 
-let fullscreen;
-let fsEnter = document.getElementById('fullscr');
-fsEnter.addEventListener('click', function (e) {
-    e.preventDefault();
-    if (!fullscreen) {
-        fullscreen = true;
-        document.documentElement.requestFullscreen();
-        fsEnter.innerHTML = "Exit Fullscreen";
-    }
-    else {
-        fullscreen = false;
-        document.exitFullscreen();
-        fsEnter.innerHTML = "Go Fullscreen";
-    }
-});
-});
-
-
-// GSAP CUSTOM CLASS
-class ActivateGSAPCursor {
-    constructor(cursorName = null) {
-        // IF TRUE, EVERY CUSTOM CONSOLE LOG MESSAGE WILL BE SHOWN. IF FALSE WE CAN DISABLE ALL MESSAGES THAT HELP WITH THE CONSTRUCTOR
-        this.consoleMsgsEnabled = true;
-        
-        // CURSOR
-        this.cursorName = cursorName;
-        this.cursor = this.cursorName && document.querySelector(cursorName);
-
-        this.additions = null;
-    }
-
-    start() {
-        this.#render();
-    }
-
-    #render() {
-        // IF THE CURSOR IS BEING PASSED TO CONSTRUCTOR AND EXISTS
-        if(this.cursorName && this.cursor) {
-            this.#activateCursorEvents();
+    let fullscreen;
+    let fsEnter = document.getElementById('fullscr');
+    fsEnter.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (!fullscreen) {
+            fullscreen = true;
+            document.documentElement.requestFullscreen();
+            fsEnter.innerHTML = "Exit Fullscreen";
         }
         else {
-            this.conslMsgs('No CURSOR was found!!');
+            fullscreen = false;
+            document.exitFullscreen();
+            fsEnter.innerHTML = "Go Fullscreen";
         }
-    }
-
-
-    // -------------------------- CURSOR EVENTS --------------------------
-    #activateCursorEvents() {
-        // INITIATE CURSOR ACTION
-        gsap.set(this.cursor, { 
-            xPercent: 0, yPercent: 0, opacity: 1 
-        });
-
-        
-        // ADJUST SPEED FOR HIGHER REFRESH MONITORS
-        const pos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-        const mouse = { x: pos.x, y: pos.y };
-
-        const xSet = gsap.quickSetter(this.cursor, "x", "px");
-        const ySet = gsap.quickSetter(this.cursor, "y", "px");
-
-        window.addEventListener("mousemove", (e) => {
-            mouse.x = e.x;
-            mouse.y = e.y;
-        });
-        
-        gsap.ticker.add(() => {
-            const speed = 0.35;
-            const dt = 1.0 - Math.pow(1.0 - speed, gsap.ticker.deltaRatio());
-    
-            pos.x += (mouse.x - pos.x) * dt;
-            pos.y += (mouse.y - pos.y) * dt;
-            xSet(pos.x);
-            ySet(pos.y);
-        });
-
-
-        // EVENTS THAT CURSOR SHOULD DO
-        // IF WE WANT TO PLAY WITH SCALE
-        this.#scaleCursorEvents();
-    }
-
-    #scaleCursorEvents() {
-        const scaleCursorHMTLAttrName = 'data-cursor-scale';
-        const hoverItemsScales = document.querySelectorAll(`*[${scaleCursorHMTLAttrName}]`);
-
-        hoverItemsScales && hoverItemsScales.forEach((item) => {
-            item.addEventListener("pointerenter", (e) => { this.#handlePointerEnterEvent(e, item, scaleCursorHMTLAttrName, 0.3); });
-            item.addEventListener("pointerleave", (e) => { this.#handlePointerLeaveEvent(e, item); });;
-        });
-    }
-
-    #handlePointerEnterEvent(e, item, nameOfDataAttr, effectDur = 0.3) {
-        // TYPES OF SCALES. EVERY SUB ARRAY CONTAINS THE ATTRIBUTE VALUE THAT WE ADD TO HTML AND THE SCALE VALUE 
-        const typesOfScalesAttrs = [['scale', 7], ['lg-scale', 10]];
-        const mapScales = new Map(typesOfScalesAttrs);
-
-        const currentScale = item.getAttribute(nameOfDataAttr);
-
-        let scaleVal = 1;
-        mapScales.forEach(function(value, key) {
-            if(currentScale === key) {
-                scaleVal = parseInt(value);
-            }
-        });
-
-        gsap.to(this.cursor, effectDur, {
-            opacity: 1,
-            scale: scaleVal,
-        });
-
-        const videoObj = {
-            videoUrl: 'https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4',
-            imgUrl: 'https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217',
-        }
-        // this.#addVideoToCursor(videoObj);
-        item.classList.add('hovered');
-    }
-
-    #addVideoToCursor({videoUrl, imgUrl}) {
-        this.additions = document.createElement('video');
-
-        this.additions.src = videoUrl;
-
-        this.additions.poster = imgUrl;
-
-        this.additions.autoplay = true;
-        this.additions.controls = false;
-        this.additions.muted = false;
-        this.additions.height = 100; // 👈️ in px
-        this.additions.width = 200; // 👈️ in px
-
-        this.cursor.appendChild(this.additions);
-    }
-
-    #handlePointerLeaveEvent(e, item, effectDur = 0.3) {
-        gsap.to(this.cursor, effectDur, {
-            opacity: 0,
-            scale: 1,
-        });
-
-        this.additions && this.cursor.removeChild(this.additions);
-
-        item.classList.remove('hovered');
-    }
-    // --------------------------------------------------------------------
-
-
-    conslMsgs(msg) {
-        this.consoleMsgsEnabled && console.log(msg);
-    }
-}
+    });
+});

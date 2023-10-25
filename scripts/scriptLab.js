@@ -16,39 +16,45 @@ $(document).ready(function () {
 let globalCursor = null;
 
 window.addEventListener("load", (event) => {
-    globalCursor = new ActivateGSAPCursor('.follow_circle', 
-        {video: {
-            url: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
-        }
-    });
+    globalCursor = new ActivateGSAPCursor('.follow_circle',
+        {
+            video: {
+                url: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
+            }
+        });
     globalCursor.start();
 
-    if(!localStorage.getItem('currState')) {
+    if (!localStorage.getItem('currState')) {
         localStorage.setItem('currState', 'home');
     }
 
+    // INIT LOADS
     getHTMLData();
-    // processAjaxData(document.querySelector('#Home'), '/home');
+    hideShowTopBar(true);
+
+    document.querySelector('#hideBtn').click();
 });
 
 
 function getHTMLData(e) {
     let initialCall = true;
     let destin = localStorage.getItem('currState');
-    if(e) {
+    if (e) {
         initialCall = false;
         destin = e.target.getAttribute('data-target').toLowerCase();
     }
-    
-    if(initialCall) {
+
+    if (initialCall) {
         sendRequest(destin);
+        localStorage.setItem('currState', destin);
     }
 
-    if(localStorage.getItem('currState') !== destin) {
-        sendRequest(destin);
+    if (localStorage.getItem('currState') !== destin) {
+        if (!document.querySelector('#Content').classList.contains('animLoading')) {
+            sendRequest(destin);
+            localStorage.setItem('currState', destin);
+        }
     }
-    
-    localStorage.setItem('currState', destin);
 
     function sendRequest(destin) {
         const url = `../${destin}Test.html`;
@@ -61,49 +67,40 @@ function getHTMLData(e) {
             .then(text => {
                 let main = document.querySelector('#Content');
                 const oldContent = main.firstElementChild;
+                const menu = document.querySelector('#fake-menu');
 
                 let doc = new DOMParser().parseFromString(text, 'text/html');
                 let newContent = doc.body.firstElementChild;
 
+                newContent.prepend(menu);
                 main.append(newContent);
-
-                console.log(text);
 
                 // AFTER RETRIEVING NEXT CONTENT CONTAINER, TRIGGER GSAP
                 GSAP_Act(oldContent, newContent);
 
-                jQuery('#Content p').attr('data-cursor-scale', 'scale');
-                jQuery('#Content img').attr('data-cursor-scale', 'lg-scale');
-                globalCursor.reconsiderItemsOfPage();
+                reAssignNewElementsToInteractWithCursor();
                 // ADD THEM TO BROSWER HISTORY SO USER CAN VISIT PREVIOUS AND NEXT PAGES
-                window.history.pushState({"html": text, "pageTitle": 'test'}, "", window.location.href);
+                window.history.pushState({ "html": text, "pageTitle": destin }, "", window.location.href);
             })
             .catch(error => {
                 console.warn('Fetch Failed:', error.message);
             })
     }
 
-    
+
     // SO AS TO STOP LINK FROM REDIRECTING TO HREF
     return false;
 }
 
-function disableAllFakeMenuBtns(status) {
-    const anchors = document.querySelectorAll('#fake-menu a');
-    if(status) {
-        for (var i = 0; i < anchors.length; i++) {
-            anchors[i].onclick = function() {return false;};
-        }
-    }
-    else {
-        for (var i = 0; i < anchors.length; i++) {
-            anchors[i].onclick = function(e) { console.log(e); return getHTMLData(e);};
-        }
-    }
+
+function reAssignNewElementsToInteractWithCursor() {
+    jQuery('#Content p').attr('data-cursor-scale', 'scale');
+    jQuery('#Content img').attr('data-cursor-scale', 'lg-scale');
+    globalCursor.reconsiderItemsOfPage();
 }
 
-window.onpopstate = function(e) {
-    if(e.state){
+window.onpopstate = function (e) {
+    if (e.state) {
         document.querySelector("#Content").innerHTML = e.state.html;
         document.title = e.state.pageTitle;
     }
@@ -111,7 +108,8 @@ window.onpopstate = function(e) {
 
 
 function GSAP_Act(toBeRemoved, toBeAdded) {
-    if(toBeRemoved) {
+    console.log(toBeRemoved);
+    if (toBeRemoved) {
         // console.log('gsap');
         // console.log(toBeRemoved);
         gsap.timeline({
@@ -121,31 +119,94 @@ function GSAP_Act(toBeRemoved, toBeAdded) {
         })
             .fromTo(toBeRemoved, {
                 opacity: 1,
-                scale: 1,
-            },{
-                opacity: 1,
-                scale: 0.7,
-                duration: 0.8
+                width: '100%'
+            }, {
+                opacity: 0,
+                width: '0%',
+                duration: 1.2
             }, 0)
             .fromTo(toBeAdded, {
                 opacity: 0,
+                scale: 0,
                 yPercent: 100,
-            },{
+                width: '70%',
+            }, {
                 opacity: 1,
+                scale: 1,
                 yPercent: 0,
-                duration: 0.8
+                width: '100%',
+                duration: 0.7
             }, 0);
 
+
+        function atTheStartOfAnimation() {
+            document.querySelector('#Content').classList.add('animLoading');
+        }
 
         function afterAnimationEnded() {
             // REPLACE OLD CONTENT WITH THE NEW ONE
             jQuery(toBeRemoved).remove();
+            document.querySelector('#Content').classList.remove('animLoading');
+        }
+    }
+}
 
-            // disableAllFakeMenuBtns(true);
+
+function hideShowTopBar(init = false) {
+    const topBar = document.querySelector('#topBar');
+
+    // INITIAL ACTION
+    if (init) {
+        gsap.timeline({
+            ease: 'back.out(2)'
+        })
+            .from(topBar, {
+                y: -100
+            }, 0);
+    }
+    else {
+        if (!topBar.classList.contains('hidden')) {
+            gsap.timeline({
+                ease: 'back.out(2)',
+                onStart: disableHiddenButton,
+                onComplete: enableHiddenButton,
+                stagger: 0.4
+            })
+                .to(topBar, {
+                    y: -100
+                }, 0)
+                .to(topBar.querySelector('#hideBtn'), {
+                    y: 100,
+                    right: 0
+                }, '-=1');
+
+            topBar.querySelector('#hideBtn').innerText = 'Show';
+        }
+        else {
+            gsap.timeline({
+                ease: 'back.out(1.7)',
+                onStart: disableHiddenButton,
+                onComplete: enableHiddenButton,
+                stagger: 0.4
+            })
+                .to(topBar, {
+                    y: 0
+                }, 0)
+                .to(topBar.querySelector('#hideBtn'), {
+                    y: 0,
+                    right: 'auto'
+                }, 0);
+
+            topBar.querySelector('#hideBtn').innerText = 'Hide';
+        }
+        topBar.classList.toggle('hidden');
+
+        function disableHiddenButton() {
+            topBar.querySelector('#hideBtn').disabled = true;
         }
 
-        function atTheStartOfAnimation() {
-            // disableAllFakeMenuBtns(false);
+        function enableHiddenButton() {
+            topBar.querySelector('#hideBtn').disabled = false;
         }
     }
 }

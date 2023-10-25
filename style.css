@@ -1,4 +1,3 @@
-
 html {
     overflow-x: hidden;
 }
@@ -9,6 +8,7 @@ html {
     position: relative;
     width: 100%;
     height: 100%;
+    font-size: 15px;
     margin: 0;
     padding: 0;
 }
@@ -43,8 +43,9 @@ p {
     text-shadow: 1px 1px 3px black;
     z-index: 1;
     -webkit-text-stroke: 1px white;
-    font-size: 1.5em;
+    font-size: 20px;
     font-weight: 400;
+    text-size-adjust: 100%;
 }
 
 p[data-cursor-scale]:hover {
@@ -63,6 +64,7 @@ p[data-cursor-scale]:hover {
     top: 0;
     z-index: 10000;
 }
+
 
 /* CURSOR */
 .follow_circle {
@@ -102,6 +104,10 @@ p[data-cursor-scale]:hover {
 
 .char {
     display: inline-block;
+}
+
+.cursor-pointer {
+    cursor: pointer;
 }
 
 
@@ -190,15 +196,14 @@ svg {
     font-size: 3em;
 }
 
-.simple-stuff img {
-    
-}
+.simple-stuff img {}
 
 .simple-stuff .container1 {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    width: 100%; height: 20vh;
+    width: 100%;
+    height: 20vh;
     max-height: 20vh;
 }
 
@@ -214,13 +219,35 @@ svg {
     left: 0;
     overflow: hidden;
     position: fixed;
-    background: wheat;
+    background: black;
     right: 0;
     top: 0;
 }
 
-.LaB .navbar {
-    position: relative;
+.LaB .navbar #hideBtn {
+    position: absolute;
+    outline: none;
+}
+
+.LaB .navbar.hidden #hideBtn {
+    background: wheat !important;
+    color: #1B1734 !important;
+    transition: all 0.5s;
+}
+
+.LaB #fake-menu ul {
+    background: rgb(0, 0, 0, 0.3);
+    color: aliceblue;
+    padding: 1em 5em;
+}
+
+.LaB #fake-menu ul li a {
+    color: greenyellow;
+}
+
+.LaB #Content {
+    display: flex;
+    background-color: transparent;
 }
 
 .LaB main {
@@ -246,4 +273,8 @@ svg {
 
 .LaB #Contact {
     background-color: brown;
+}
+
+.LaB p {
+    padding: 1em;
 }
