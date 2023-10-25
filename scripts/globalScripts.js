@@ -65,6 +65,10 @@ class ActivateGSAPCursor {
         this.#scaleCursorEvents();
     }
 
+    reconsiderItemsOfPage() {
+        this.#scaleCursorEvents();
+    }
+
     #scaleCursorEvents() {
         const scaleCursorHMTLAttrName = 'data-cursor-scale';
         const hoverItemsScales = document.querySelectorAll(`*[${scaleCursorHMTLAttrName}]`);
