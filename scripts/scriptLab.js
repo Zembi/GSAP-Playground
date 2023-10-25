@@ -32,7 +32,7 @@ window.addEventListener("load", (event) => {
     getHTMLData();
     hideShowTopBar(true);
 
-    document.querySelector('#hideBtn').click();
+    // document.querySelector('#hideBtn').click();
 });
 
 
