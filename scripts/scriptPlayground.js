@@ -1,5 +1,4 @@
 
-
 $(document).ready(function() {
     // ELEMENTS THAT WILL INTERACT WITH GSAP CURSOR
     jQuery('p').attr('data-cursor-scale', 'scale');
